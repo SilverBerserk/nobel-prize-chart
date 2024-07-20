@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import Prizes from './Prizes';
 import Laureates from './Laureates';
+import CategoryPie from './CategoryPie';
 
 
 const App = () => {
@@ -27,6 +28,7 @@ const App = () => {
       </header>
       <Prizes/>
       <Laureates/>
+      <CategoryPie/>
     </div>
   );
 }

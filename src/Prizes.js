@@ -6,7 +6,7 @@ import Slider from '@mui/material/Slider'
 import { useDebounce } from 'use-debounce';
 
 const PrizeDetails = ({details}) => {
-    return <Card>
+    return <Card sx={{minHeight:'200px'}}>
         <CardHeader subheader={details.laureates.map(e=>e.fullName?.en).join(', ')}  title={details.categoryFullName?.en} />
             <CardContent ><Typography variant="h5" color="text.secondary">{`Award: ${details.prizeAmountAdjusted}$`}</Typography> </CardContent>
     </Card>
@@ -80,6 +80,7 @@ const Prizes = () => {
                     onClose={handleDialogClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
+                    scroll='paper'
                 >
                     <DialogTitle id="alert-dialog-title">
                         {`Year ${dialog.header?.year}, ${dialog.header?.sum}$`}

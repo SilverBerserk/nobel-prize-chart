@@ -1,36 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
-import Prizes from './Prizes';
-import Laureates from './Laureates';
-import CategoryPie from './CategoryPie';
+import LaureateOverview from './LaureateOverview';
 import PrizeOverview from './PrizeOverview';
+import { Tab, Tabs } from '@mui/material';
+import { useState } from 'react';
 
 
 const App = () => {
 
+  const [tab, setTab] = useState('PrizeOverview')
 
-// console.log(prizesAmount)
+  const handleChange = (event, value) => {
+    setTab(value)
+  }
 
   return (
     <div className="App">
-      <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a> */}
-      </header>
-      <PrizeOverview/>
-      {/* <Prizes/> */}
-      {/* <Laureates/> */}
-      {/* <CategoryPie/> */}
+      <Tabs value={tab} onChange={handleChange} centered>
+        <Tab label='Prize Overview' value='PrizeOverview'/>
+        <Tab label='Find Laureate' value='FindLaureate'></Tab>
+      </Tabs>
+      {tab==='PrizeOverview' && <PrizeOverview/>}
+      {tab==='FindLaureate' && <LaureateOverview/>}
     </div>
   );
 }

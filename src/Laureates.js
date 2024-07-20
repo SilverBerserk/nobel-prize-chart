@@ -1,8 +1,6 @@
 import { LineChart } from '@mui/x-charts';
-import { useEffect, useState } from 'react';
-import { getLaureates } from './api';
-import { Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, Typography, Slider } from '@mui/material';
-import { useDebounce } from 'use-debounce';
+import { useState } from 'react';
+import { Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 
 const LaureateDetails = ({details}) => {
     return <Card sx={{minHeight:'200px'}}>
@@ -12,25 +10,10 @@ const LaureateDetails = ({details}) => {
     </Card>
 }
 
-const Laureates = () => {
-    const [laureates,setLaureates] = useState([])
-    const [load,setLoad] = useState(true)
+const Laureates = ({data, load}) => {
     const [dialog,setDialog] = useState({})
-    const [yearRange, setYearRange] = useState([1904,1906])
 
-    const [years] = useDebounce(yearRange,1000)
-
-    useEffect(() => {
-        setLoad(true)
-        const params = {nobelPrizeYear:years[0],yearTo:years[1],limit:9999}
-        getLaureates(params)
-        .then(res => {
-        setLaureates(res.laureates)})
-        .catch(err => console.error(err))
-        .finally(()=> setLoad(false))
-    }, [years])
-
-    let laureatesCount = laureates.length && laureates.map(e=>({id:e.id,years:e.nobelPrizes.map(a => a.awardYear)}))
+    const laureatesCount = data.length && data.map(e=>({id:e.id,years:e.nobelPrizes.map(a => a.awardYear)}))
     let ll = {}
     laureatesCount.length && laureatesCount.map(e=>e.years).flat().forEach(element => {
         ll[element] = (ll[element] ?? 0) + 1
@@ -38,33 +21,15 @@ const Laureates = () => {
 
 
     const handleMarkClick = (id) => {
-        setDialog({open:true,header:{year:Object.keys(ll)[id],sum: Object.values(ll)[id]},data:laureates.filter(e => e.nobelPrizes.find(y => y.awardYear == Object.keys(ll)[id]))})
+        setDialog({open:true,header:{year:Object.keys(ll)[id],sum: Object.values(ll)[id]},data:data.filter(e => e.nobelPrizes.find(y => y.awardYear == Object.keys(ll)[id]))})
     }
 
     const handleDialogClose = () => {
         setDialog({open:false})
     }
 
-    const handleYearRangeChange = (event, value) => {
-        setYearRange(value)
-    }
 
-
-    console.log(dialog.data)
-
-    return <Stack direction='column' sx={{margin:4}}>
-                <Slider
-                    getAriaLabel={() => 'Years range'}
-                    // getAriaValueText={e=>e}
-                    value={yearRange}
-                    onChange={handleYearRangeChange}
-                    min={1901}
-                    max={2024}
-                    marks={[{value:10,label:1901},{value:90,label:2024}]}
-                    valueLabelDisplay="on"
-                    disabled={load}
-                    // getAriaValueText={(value) => `{valuetext}`}
-                />
+    return <>
                 <LineChart
                             loading={load}
                             onMarkClick={(e,i)=>handleMarkClick(i.dataIndex)}
@@ -93,8 +58,7 @@ const Laureates = () => {
                     <Button onClick={handleDialogClose}>Close</Button>
                     </DialogActions>
                 </Dialog>
-
-            </Stack>
+            </>
 }
 
 export default Laureates

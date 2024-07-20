@@ -2,7 +2,6 @@ import { LineChart } from '@mui/x-charts';
 import { useEffect, useState } from 'react';
 import { getPrizes } from './api';
 import { Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, Typography } from '@mui/material';
-import Slider from '@mui/material/Slider'
 import { useDebounce } from 'use-debounce';
 
 const PrizeDetails = ({details}) => {
@@ -12,58 +11,27 @@ const PrizeDetails = ({details}) => {
     </Card>
 }
 
-const Prizes = () => {
-    const [prizes,setPrizes] = useState([])
-    const [load,setLoad] = useState(true)
+const Prizes = ({data, load}) => {
     const [dialog,setDialog] = useState({})
-    const [yearRange, setYearRange] = useState([1904,1906])
 
-    const [years] = useDebounce(yearRange,1000)
-
-    useEffect(() => {
-        setLoad(true)
-        const params = {nobelPrizeYear:years[0],yearTo:years[1],limit:9999}
-        getPrizes(params)
-        .then(res => {
-        setPrizes(res.nobelPrizes)})
-        .catch(err => console.error(err))
-        .finally(()=> setLoad(false))
-    }, [years])
-
+    console.log('dd',data)
     let prizesSum = {}
-    prizes.length && prizes.forEach(element => {
+    data.length && data.forEach(element => {
         prizesSum[element.awardYear] =(prizesSum[element.awardYear] ?? 0) + element.prizeAmount  
     });
 
     
 
     const handleMarkClick = (id) => {
-        setDialog({open:true,header:{year:Object.keys(prizesSum)[id],sum: Object.values(prizesSum)[id]},data:prizes.filter(e => e.awardYear == Object.keys(prizesSum)[id])})
+        setDialog({open:true,header:{year:Object.keys(prizesSum)[id],sum: Object.values(prizesSum)[id]},data:data.filter(e => e.awardYear == Object.keys(prizesSum)[id])})
     }
 
     const handleDialogClose = () => {
         setDialog({open:false})
     }
 
-    const handleYearRangeChange = (event, value) => {
-        setYearRange(value)
-    }
 
-
-
-    return <Stack direction='column' sx={{margin:4}}>
-                <Slider
-                    getAriaLabel={() => 'Years range'}
-                    // getAriaValueText={e=>e}
-                    value={yearRange}
-                    onChange={handleYearRangeChange}
-                    min={1901}
-                    max={2024}
-                    marks={[{value:10,label:1901},{value:90,label:2024}]}
-                    valueLabelDisplay="on"
-                    disabled={load}
-                    // getAriaValueText={(value) => `{valuetext}`}
-                />
+    return <>
                 <LineChart
                             loading={load}
                             onMarkClick={(e,i)=>handleMarkClick(i.dataIndex)}
@@ -93,7 +61,7 @@ const Prizes = () => {
                     </DialogActions>
                 </Dialog>
 
-            </Stack>
+            </>
 }
 
 export default Prizes

@@ -3,6 +3,7 @@ import './App.css';
 import Prizes from './Prizes';
 import Laureates from './Laureates';
 import CategoryPie from './CategoryPie';
+import PrizeOverview from './PrizeOverview';
 
 
 const App = () => {
@@ -26,9 +27,10 @@ const App = () => {
           Learn React
         </a> */}
       </header>
-      <Prizes/>
-      <Laureates/>
-      <CategoryPie/>
+      <PrizeOverview/>
+      {/* <Prizes/> */}
+      {/* <Laureates/> */}
+      {/* <CategoryPie/> */}
     </div>
   );
 }

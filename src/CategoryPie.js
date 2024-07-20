@@ -12,90 +12,26 @@ const PrizeDetails = ({details}) => {
     </Card>
 }
 
-const CategoryPie = () => {
-    const [prizes,setPrizes] = useState([])
-    const [load,setLoad] = useState(true)
-    const [dialog,setDialog] = useState({})
-    const [yearRange, setYearRange] = useState([1904,1906])
-
-    const [years] = useDebounce(yearRange,1000)
-
-    useEffect(() => {
-        setLoad(true)
-        const params = {nobelPrizeYear:years[0],yearTo:years[1],limit:9999}
-        getPrizes(params)
-        .then(res => {
-        setPrizes(res.nobelPrizes)})
-        .catch(err => console.error(err))
-        .finally(()=> setLoad(false))
-    }, [years])
+const CategoryPie = ({data, load}) => {
 
     let prizesSum = {}
-    prizes.length && prizes.forEach(element => {
+    data.length && data.forEach(element => {
         prizesSum[element.category.en] =(prizesSum[element.category.en] ?? 0) + 1  
     });
 
     const pieData = Object.entries(prizesSum).map(([key, val],i) => ({id:i,label:key, value:val}))
 
-    console.log(pieData)
-
-    
-
-    const handleMarkClick = (id) => {
-        setDialog({open:true,header:{year:Object.keys(prizesSum)[id],sum: Object.values(prizesSum)[id]},data:prizes.filter(e => e.awardYear == Object.keys(prizesSum)[id])})
-    }
-
-    const handleDialogClose = () => {
-        setDialog({open:false})
-    }
-
-    const handleYearRangeChange = (event, value) => {
-        setYearRange(value)
-    }
 
 
-
-    return <Stack direction='column' sx={{margin:4}}>
-                <Slider
-                    getAriaLabel={() => 'Years range'}
-                    // getAriaValueText={e=>e}
-                    value={yearRange}
-                    onChange={handleYearRangeChange}
-                    min={1901}
-                    max={2024}
-                    marks={[{value:10,label:1901},{value:90,label:2024}]}
-                    valueLabelDisplay="on"
-                    disabled={load}
-                    // getAriaValueText={(value) => `{valuetext}`}
-                />
-                <PieChart
-                            loading={load}
-                            series={[{ data: pieData,
-                                paddingAngle: 5,
-                                cornerRadius: 5,
-                                innerRadius:30,
-                             }]}
-                            width={500}
-                            height={300}/>
-                <Dialog
-                    open={!!dialog.open}
-                    onClose={handleDialogClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                    scroll='paper'
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {`Year ${dialog.header?.year}, ${dialog.header?.sum}$`}
-                    </DialogTitle>
-                    <DialogContent sx={{display:'flex', flexDirection:'column', gap:3}}>
-                        {dialog.data?.map((e,i)=><PrizeDetails key={'deatil'+i} details={e}/>)}
-                    </DialogContent>
-                    <DialogActions>
-                    <Button onClick={handleDialogClose}>Close</Button>
-                    </DialogActions>
-                </Dialog>
-
-            </Stack>
+    return <PieChart
+                    loading={load}
+                    series={[{ data: pieData,
+                        paddingAngle: 5,
+                        cornerRadius: 5,
+                        innerRadius:30,
+                        }]}
+                    width={500}
+                    height={300}/>
 }
 
 export default CategoryPie

@@ -5,8 +5,9 @@ const URL = 'https://api.nobelprize.org/2.1/nobelPrizes'
 
 // ?nobelPrizeYear=1908&yearTo=1910
 
-const get = async () => {
+const get = async (params) => {
     const config = {url:URL, method: 'GET', 
+            params,
         headers: {
             // 'Access-Control-Allow-Origin': '*',
             // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",

@@ -1,21 +1,28 @@
 import axios from 'axios'
 
 
-const URL = 'https://api.nobelprize.org/2.1/nobelPrizes'
+const URL = 'https://api.nobelprize.org/2.1/'
 
-// ?nobelPrizeYear=1908&yearTo=1910
 
-const get = async (params) => {
-    const config = {url:URL, method: 'GET', 
-            params,
-        headers: {
-            // 'Access-Control-Allow-Origin': '*',
-            // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-            // accept: 'application/json'
-    }}
+const getPrizes = async (params) => {
+    const config = {
+        url:URL+'nobelPrizes',
+        method: 'GET', 
+        params,
+    }
+    return await axios.request(config)
+        .then(res => res.data)
+}
+
+const getLaureates = async (params) => {
+    const config = {
+        url:URL+'laureates',
+        method: 'GET', 
+        params,
+    }
     return await axios.request(config)
         .then(res => res.data)
 }
 
 
-export {get}
+export {getPrizes,getLaureates}

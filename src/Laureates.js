@@ -1,19 +1,21 @@
 import { LineChart } from '@mui/x-charts';
 import { useEffect, useState } from 'react';
-import { getPrizes } from './api';
+import { getLaureates } from './api';
 import { Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, Typography } from '@mui/material';
 import Slider from '@mui/material/Slider'
 import { useDebounce } from 'use-debounce';
 
 const PrizeDetails = ({details}) => {
+    console.log(details)
     return <Card>
-        <CardHeader subheader={details.laureates.map(e=>e.fullName?.en).join(', ')}  title={details.categoryFullName?.en} />
-            <CardContent ><Typography variant="h5" color="text.secondary">{`Award: ${details.prizeAmountAdjusted}$`}</Typography> </CardContent>
+        <CardHeader title={details.fullName?.en}  subheader={`${[details.birth?.date,details.death?.date].join('  -  ')}`} />
+            <CardContent ><Typography variant="h5" color="text.secondary">{`Nobel Prizes: ${details.nobelPrizes.length}`}</Typography>
+        </CardContent>
     </Card>
 }
 
-const Prizes = () => {
-    const [prizes,setPrizes] = useState([])
+const Laureates = () => {
+    const [laureates,setLaureates] = useState([])
     const [load,setLoad] = useState(true)
     const [dialog,setDialog] = useState({})
     const [yearRange, setYearRange] = useState([1904,1906])
@@ -23,22 +25,24 @@ const Prizes = () => {
     useEffect(() => {
         setLoad(true)
         const params = {nobelPrizeYear:years[0],yearTo:years[1],limit:9999}
-        getPrizes(params)
+        getLaureates(params)
         .then(res => {
-        setPrizes(res.nobelPrizes)})
+        setLaureates(res.laureates)})
         .catch(err => console.error(err))
         .finally(()=> setLoad(false))
     }, [years])
 
-    let prizesSum = {}
-    prizes.length && prizes.forEach(element => {
-        prizesSum[element.awardYear] =(prizesSum[element.awardYear] ?? 0) + element.prizeAmount  
+    let laureatesCount = laureates.length && laureates.map(e=>({id:e.id,years:e.nobelPrizes.map(a => a.awardYear)}))
+    console.log('laureatesCount',laureatesCount)
+    let ll = {}
+    laureatesCount.length && laureatesCount.map(e=>e.years).flat().forEach(element => {
+        ll[element] = (ll[element] ?? 0) + 1
     });
 
-    
+    console.log(ll)
 
     const handleMarkClick = (id) => {
-        setDialog({open:true,header:{year:Object.keys(prizesSum)[id],sum: Object.values(prizesSum)[id]},data:prizes.filter(e => e.awardYear == Object.keys(prizesSum)[id])})
+        setDialog({open:true,header:{year:Object.keys(ll)[id],sum: Object.values(ll)[id]},data:laureates.filter(e => e.nobelPrizes.find(y => y.awardYear == Object.keys(ll)[id]))})
     }
 
     const handleDialogClose = () => {
@@ -50,6 +54,7 @@ const Prizes = () => {
     }
 
 
+    console.log(dialog.data)
 
     return <Stack direction='column' sx={{margin:4}}>
                 <Slider
@@ -68,11 +73,11 @@ const Prizes = () => {
                             loading={load}
                             onMarkClick={(e,i)=>handleMarkClick(i.dataIndex)}
                             xAxis={[{ 
-                                data: Object.keys(prizesSum).map(e=> new Date(e,0,1)) ,
+                                data: Object.keys(ll).map(e=> new Date(e,0,1)) ,
                                 scaleType:'time',
                                 valueFormatter: (value) => value.getFullYear().toString(),}]}
                             
-                            series={[{ data: Object.values(prizesSum) }]}
+                            series={[{ data: Object.values(ll) }]}
                             width={500}
                             height={300}/>
                 <Dialog
@@ -82,7 +87,7 @@ const Prizes = () => {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">
-                        {`Year ${dialog.header?.year}, ${dialog.header?.sum}$`}
+                        {`Year ${dialog.header?.year}, ${dialog.header?.sum} Laureates`}
                     </DialogTitle>
                     <DialogContent sx={{display:'flex', flexDirection:'column', gap:3}}>
                         {dialog.data?.map((e,i)=><PrizeDetails key={'deatil'+i} details={e}/>)}
@@ -95,4 +100,4 @@ const Prizes = () => {
             </Stack>
 }
 
-export default Prizes
+export default Laureates

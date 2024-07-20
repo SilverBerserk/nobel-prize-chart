@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Prizes from './Prizes';
+import Laureates from './Laureates';
 
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         </a> */}
       </header>
       <Prizes/>
+      <Laureates/>
     </div>
   );
 }

@@ -29,7 +29,7 @@ const LaureateOverviewDetails = ({ details }) => {
 const LaureateOverview = () => {
     const [laureates, setLaureates] = useState([])
 
-    const [load, setLoad] = useState({ loadPrizes: true, loadLaureates: true })
+    const [load, setLoad] = useState(false)
     const [value,setValue] = useState('')
     const [searchBy, setSearchBy] = useState('name')
     const [dialog, setDialog] = useState({})

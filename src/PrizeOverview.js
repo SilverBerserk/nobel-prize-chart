@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useDebounce } from "use-debounce"
-import { Slider, Stack } from "@mui/material"
+import { Box, Slider, Stack } from "@mui/material"
 import { getLaureates, getPrizes } from "./api"
 import Prizes from "./Prizes"
 import Laureates from "./Laureates"
@@ -49,18 +49,23 @@ const PrizeOverview = () => {
 
     return (
         <Stack display='flex' flexDirection='column' alignItems='center'>
-            <Slider
-                getAriaLabel={() => 'Years range'}
-                // getAriaValueText={e=>e}
-                value={yearRange}
-                onChange={handleYearRangeChange}
-                min={1901}
-                max={2024}
-                marks={[{ value: 10, label: 1901 }, { value: 90, label: 2024 }]}
-                valueLabelDisplay="on"
-                disabled={load.loadPrizes || load.loadLaureates}
-            // getAriaValueText={(value) => `{valuetext}`}
-            />
+            <Stack sx={{width:'500px'}}>
+                <Slider
+                    getAriaLabel={() => 'Years range'}
+                    // getAriaValueText={e=>e}
+                    value={yearRange}
+                    onChange={handleYearRangeChange}
+                    min={1901}
+                    max={2024}
+                    marks={[{ value: 10, label: 1901 }, { value: 90, label: 2024 }]}
+                    valueLabelDisplay="on"
+                    disabled={load.loadPrizes || load.loadLaureates}
+                // getAriaValueText={(value) => `{valuetext}`}
+                />
+                <Box sx={{display:'flex', justifyContent:'space-between', width:'100%'}}>
+                    <span>1901</span><span>2024</span>
+                </Box>
+            </Stack>
             <Prizes data={prizes} load={load.loadPrizes} />
             <Laureates data={laureates} load={load.loadLaureates} />
             <CategoryPie data={prizes} load={load.loadPrizes} />
